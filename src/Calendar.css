@@ -1,0 +1,830 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Manrope:wght@400;500;600;700&display=swap');
+
+/* ─── CSS Variables ─────────────────────────────────────────── */
+.cal-root {
+  --ink: #221a12;
+  --text-soft: #73604b;
+  --paper: #fff8ee;
+  --paper-2: #fff2df;
+  --paper-3: #ffead2;
+  --line: #e7d7c1;
+  --brand: #1a78c2;        /* blue from reference */
+  --brand-dark: #155fa0;
+  --accent: #0f7e7d;
+  --accent-soft: #dff6f5;
+  --glass: rgba(255, 252, 246, 0.62);
+  --weekend: #1a78c2;
+  --shadow: 0 28px 64px rgba(40, 26, 14, 0.28);
+  --range-bg: rgba(26, 120, 194, 0.12);
+
+  /* Portrait wall calendar: fixed width, taller */
+  --cal-width: 480px;
+  --hero-height: 300px;
+  --bottom-height: 400px;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: var(--cal-width);
+  margin: 0 auto;
+  padding: 14px 0 6px;
+  font-family: 'Manrope', sans-serif;
+}
+
+/* Dark mode overrides */
+.cal-root.dark {
+  --ink: #fff5ea;
+  --text-soft: #c8b8a4;
+  --paper: #1d1a17;
+  --paper-2: #27211d;
+  --paper-3: #342a22;
+  --line: #43382d;
+  --brand: #4a9fdf;
+  --brand-dark: #2e7bb8;
+  --accent: #45c0bb;
+  --accent-soft: #123635;
+  --glass: rgba(42, 35, 29, 0.72);
+  --weekend: #60b0e8;
+  --shadow: 0 32px 80px rgba(0, 0, 0, 0.6);
+  --range-bg: rgba(74, 159, 223, 0.14);
+}
+
+/* Flipping state */
+.cal-root.is-flipping::before {
+  opacity: 0.2;
+  filter: blur(7px);
+  transform: translate3d(12px, 8px, 0) scale(0.93);
+}
+
+/* ─── Spiral bar ─────────────────────────────────────────────── */
+.spiral-bar {
+  width: var(--cal-width);
+  height: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 18px;
+  margin-bottom: -8px;
+  border: 1px solid color-mix(in srgb, var(--line) 70%, #8e684a 30%);
+  border-bottom: none;
+  border-radius: 16px 16px 0 0;
+  background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--paper-3) 70%, var(--paper) 30%) 0%,
+      var(--paper-2) 100%
+    ),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.05) 0 8px, rgba(0,0,0,0.04) 8px 16px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.44),
+    0 5px 12px rgba(52,30,16,0.13);
+  z-index: 2;
+}
+
+.spiral-ring {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff9f0 0%, #dcc4a6 54%, #9f7c5e 100%);
+  border: 1px solid rgba(101, 76, 57, 0.42);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.65),
+    inset 0 -2px 3px rgba(62,39,25,0.27),
+    0 1px 3px rgba(51,31,19,0.2);
+}
+
+.spiral-ring::after {
+  content: '';
+  display: block;
+  width: 5px;
+  height: 5px;
+  margin: 3px auto;
+  border-radius: 50%;
+  background: rgba(78, 50, 32, 0.22);
+}
+
+/* ─── Main card ──────────────────────────────────────────────── */
+.cal-card {
+  position: relative;
+  width: var(--cal-width);
+  /* Portrait: total height = hero + bottom */
+  min-height: calc(var(--hero-height) + var(--bottom-height));
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid rgba(93, 63, 40, 0.15);
+  background: var(--paper);
+  box-shadow: var(--shadow);
+  transform-origin: center top;
+  animation: card-rise 0.6s ease;
+}
+
+.cal-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(125deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 36%),
+    radial-gradient(circle at 95% 10%, rgba(255,197,140,0.14), rgba(255,197,140,0));
+  z-index: 0;
+}
+
+.cal-card.page-flip {
+  animation: page-flip 0.25s ease forwards;
+}
+
+@keyframes card-rise {
+  from { opacity: 0; transform: translateY(12px) scale(0.99); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+@keyframes page-flip {
+  from { opacity: 1; transform: perspective(600px) rotateX(0deg); }
+  to   { opacity: 0; transform: perspective(600px) rotateX(-9deg); }
+}
+
+/* ─── TOP HALF: Hero image ───────────────────────────────────── */
+.cal-hero {
+  position: relative;
+  width: 100%;
+  height: var(--hero-height);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  opacity: 0;
+  transform: scale(1.04);
+  transition: opacity 0.55s ease, transform 1.3s ease;
+  display: block;
+}
+
+.hero-img.loaded {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Dark gradient overlay on hero — richer at bottom for label legibility */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(6, 14, 28, 0.18) 0%,
+      rgba(6, 14, 28, 0.05) 35%,
+      rgba(6, 14, 28, 0.52) 72%,
+      rgba(6, 14, 28, 0.78) 100%
+    ),
+    radial-gradient(circle at 12% 10%, rgba(255, 201, 140, 0.28), rgba(255, 201, 140, 0));
+  pointer-events: none;
+}
+
+
+
+.cal-root.dark .cal-hero::after {
+  background: linear-gradient(to bottom, rgba(29, 26, 23, 0) 0%, var(--paper) 100%);
+}
+
+/* Year + Month label — bottom-right of hero, wall-calendar style */
+.hero-month-label {
+  position: absolute;
+  right: 22px;
+  bottom: 28px;
+  color: #fff;
+  text-align: right;
+  z-index: 3;
+  line-height: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+/* YEAR — large, thin/light, sits above month */
+.hero-year {
+  display: block;
+  font-family: 'Manrope', sans-serif;
+  font-size: 38px;
+  font-weight: 300;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  opacity: 0.88;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.5);
+  line-height: 1;
+}
+
+/* MONTH — bold, dominant */
+.hero-month {
+  display: block;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 48px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
+  line-height: 1;
+}
+
+/* Theme toggle button */
+.theme-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255,255,255,0.38);
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(255,255,255,0.14);
+  backdrop-filter: blur(5px);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.24);
+  transition: transform 0.2s ease, background 0.2s ease;
+  z-index: 4;
+}
+
+.theme-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(255,255,255,0.28);
+}
+
+/* ─── BOTTOM HALF: Notes + Grid ──────────────────────────────── */
+.cal-bottom {
+  display: grid;
+  /* Notes panel left ~38%, Grid right ~62% — mirrors reference proportions */
+  grid-template-columns: 164px 1fr;
+  min-height: var(--bottom-height);
+  border-top: 2px solid var(--line);
+  background: var(--paper);
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── LEFT: Notes panel ──────────────────────────────────────── */
+.notes-panel {
+  padding: 14px 12px 14px 14px;
+  border-right: 1px solid var(--line);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--paper-2) 88%, white 12%) 0%,
+      var(--paper) 72%
+    );
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Faint horizontal paper lines background */
+.notes-panel::before {
+  content: '';
+  position: absolute;
+  inset: 40px 0 0 0;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0px,
+    transparent 23px,
+    rgba(122, 95, 71, 0.1) 23px,
+    rgba(122, 95, 71, 0.1) 24px
+  );
+  pointer-events: none;
+}
+
+/* Red margin line (classic notepad) */
+.notes-panel::after {
+  content: '';
+  position: absolute;
+  top: 40px;
+  bottom: 0;
+  left: 26px;
+  width: 1px;
+  background: rgba(200, 60, 60, 0.18);
+  pointer-events: none;
+}
+
+.notes-header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-soft);
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 1;
+}
+
+.clear-btn {
+  margin-left: auto;
+  border: none;
+  background: transparent;
+  color: var(--text-soft);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 2px;
+}
+
+.clear-btn:hover { color: var(--brand); }
+
+.range-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 3px;
+  color: var(--text-soft);
+  font-size: 9.5px;
+  font-weight: 500;
+  position: relative;
+  z-index: 1;
+  line-height: 1.4;
+}
+
+.range-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.start-dot { background: var(--brand); }
+.end-dot   { background: var(--accent); }
+
+.range-arrow {
+  margin: 0 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--brand) 14%, transparent 86%);
+  color: var(--brand);
+}
+
+/* Visible notepad lines (decorative, behind textarea) */
+.notepad-lines {
+  display: none; /* hidden — background pseudo handles it */
+}
+
+/* Textarea fills the rest of the notes column */
+.notes-area {
+  flex: 1;
+  width: 100%;
+  min-height: 100px;
+  resize: none;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  padding: 4px 6px 4px 14px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 11.5px;
+  line-height: 24px; /* match the repeating lines */
+  color: var(--ink);
+  background: transparent;
+  position: relative;
+  z-index: 1;
+}
+
+.notes-area:focus {
+  background: rgba(255,255,255,0.18);
+}
+
+.notes-area::placeholder {
+  color: color-mix(in srgb, var(--text-soft) 72%, white 28%);
+  font-style: italic;
+}
+
+/* Note pip dots */
+.note-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  min-height: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.note-pip {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.44;
+  cursor: pointer;
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.note-pip:hover {
+  opacity: 0.9;
+  transform: scale(1.35);
+}
+
+.note-pip.active {
+  opacity: 1;
+  background: var(--brand);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand) 30%, white 70%);
+}
+
+/* ─── RIGHT: Calendar grid ────────────────────────────────────── */
+.grid-panel {
+  padding: 12px 14px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Month nav row */
+.month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+  gap: 6px;
+}
+
+.month-nav-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+}
+
+.month-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: var(--ink);
+}
+
+.jump-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.year-select-wrap {
+  position: relative;
+  min-width: 72px;
+}
+
+.jump-select {
+  min-width: 72px;
+  height: 26px;
+  padding: 0 8px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--line) 72%, var(--brand) 28%);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--paper) 78%, white 22%),
+    var(--paper)
+  );
+  color: var(--ink);
+  font-family: 'Manrope', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+  appearance: auto;
+}
+
+.year-trigger {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.year-menu {
+  position: absolute;
+  top: calc(100% + 3px);
+  left: 0;
+  width: 100%;
+  z-index: 30;
+  max-height: 160px;
+  overflow-y: auto;
+  border: 1px solid color-mix(in srgb, var(--line) 72%, var(--brand) 28%);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--paper) 94%, white 6%);
+  box-shadow: 0 8px 20px rgba(32,20,12,0.18);
+  padding: 3px;
+}
+
+.year-item {
+  width: 100%;
+  height: 26px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  font-family: 'Manrope', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: left;
+  padding: 0 8px;
+  cursor: pointer;
+}
+
+.year-item:hover {
+  background: color-mix(in srgb, var(--brand) 13%, var(--paper) 87%);
+}
+
+.year-item.active {
+  background: color-mix(in srgb, var(--accent) 16%, var(--paper) 84%);
+  color: color-mix(in srgb, var(--accent) 76%, var(--ink) 24%);
+}
+
+.month-nav button {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 3px 7px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--paper) 80%, white 20%),
+    var(--paper)
+  );
+  color: var(--ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.month-nav button:hover {
+  transform: translateY(-1px);
+  border-color: var(--brand);
+  background: color-mix(in srgb, var(--brand) 13%, var(--paper) 87%);
+  box-shadow: 0 5px 12px rgba(58,35,21,0.12);
+}
+
+/* Day header row */
+.day-headers {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  margin-bottom: 5px;
+}
+
+.day-header {
+  text-align: center;
+  padding: 5px 0;
+  color: #383838;
+  font-family: 'Manrope', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.cal-root.dark .day-header {
+  color: var(--text-soft);
+}
+
+.day-header.weekend {
+  color: var(--weekend);
+}
+
+/* Day grid */
+.day-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px 3px;
+  flex: 1;
+}
+
+.day-cell {
+  position: relative;
+  min-height: 32px;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  color: #222;
+  font-family: 'Manrope', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  background: transparent;
+  border: none;
+  transition: color 0.15s ease;
+  animation: cell-pop 0.28s ease both;
+}
+
+.cal-root.dark .day-cell {
+  color: var(--ink);
+}
+
+.day-cell:not(.empty):not(.overflow):hover {
+  color: var(--brand-dark);
+}
+
+.day-cell.weekend {
+  color: var(--weekend);
+}
+
+.cal-root.dark .day-cell.weekend {
+  color: var(--weekend);
+}
+
+.day-cell.overflow {
+  color: #b8b8b8;
+  opacity: 0.65;
+  font-weight: 400;
+  pointer-events: none;
+}
+
+/* Today highlight */
+.day-cell.today .day-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.cal-root.dark .day-cell.today .day-num {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* Start date */
+.day-cell.start {
+  background: var(--brand) !important;
+  color: #fff !important;
+  border-radius: 999px;
+}
+
+/* End date */
+.day-cell.end {
+  background: var(--brand) !important;
+  color: #fff !important;
+  border-radius: 999px;
+}
+
+/* Single selected date */
+.day-cell.single-date {
+  border-radius: 999px !important;
+}
+
+/* In-range dates */
+.day-cell.range {
+  background: var(--range-bg);
+  border-radius: 999px;
+  color: var(--brand-dark);
+}
+
+.cal-root.dark .day-cell.range {
+  color: var(--brand);
+}
+
+/* Holiday dot */
+.holiday-dot {
+  position: absolute;
+  top: 3px;
+  right: 4px;
+  font-size: 5px;
+  color: #e05320;
+  line-height: 1;
+}
+
+/* Note indicator */
+.note-indicator {
+  position: absolute;
+  bottom: 2px;
+  right: 4px;
+  font-size: 9px;
+  color: var(--accent);
+  line-height: 1;
+  font-weight: 700;
+}
+
+@keyframes cell-pop {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Responsive ─────────────────────────────────────────────── */
+
+/* Tablet: allow card to stretch */
+@media (max-width: 540px) {
+  .cal-root {
+    --cal-width: 100%;
+    --hero-height: 240px;
+    --bottom-height: auto;
+    width: 100%;
+    padding: 10px 0 4px;
+  }
+
+  .spiral-bar {
+    width: 100%;
+  }
+
+  .cal-card {
+    width: 100%;
+    border-radius: 12px;
+  }
+
+  .hero-month {
+    font-size: 38px;
+  }
+
+  .hero-year {
+    font-size: 30px;
+    letter-spacing: 2px;
+  }
+
+  .hero-month-label {
+    right: 16px;
+    bottom: 22px;
+  }
+
+  /* On mobile: stack notes above grid */
+  .cal-bottom {
+    grid-template-columns: 1fr;
+  }
+
+  .notes-panel {
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+    min-height: 140px;
+  }
+
+  .notes-panel::after {
+    display: none;
+  }
+
+  .grid-panel {
+    padding: 12px 12px 16px;
+  }
+
+  .month-nav {
+    align-items: flex-start;
+  }
+
+  .month-nav-center {
+    flex: 1;
+  }
+}
+
+@media (max-width: 380px) {
+  .spiral-bar {
+    padding: 0 8px;
+    height: 22px;
+  }
+
+  .spiral-ring {
+    width: 10px;
+    height: 10px;
+  }
+
+  .spiral-ring::after {
+    width: 4px;
+    height: 4px;
+    margin-top: 2px;
+  }
+
+  .hero-month {
+    font-size: 30px;
+  }
+
+  .hero-year {
+    font-size: 24px;
+    letter-spacing: 1.5px;
+  }
+
+  .day-cell {
+    min-height: 28px;
+    font-size: 12px;
+  }
+
+  .day-header {
+    font-size: 8.5px;
+  }
+
+  .jump-select {
+    min-width: 64px;
+    font-size: 10px;
+    height: 24px;
+    padding: 0 6px;
+  }
+}

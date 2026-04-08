@@ -1,0 +1,32 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background:
+    radial-gradient(circle at 14% 20%, #ffd3ab 0%, rgba(255, 211, 171, 0) 38%),
+    radial-gradient(circle at 82% 12%, #bcecea 0%, rgba(188, 236, 234, 0) 34%),
+    linear-gradient(160deg, #fff6ea 0%, #f8ecdc 46%, #f0dfca 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  font-family: 'Manrope', sans-serif;
+  color: #2d2015;
+  padding: 26px 14px 24px;
+  transition: background 0.35s ease, color 0.35s ease;
+}
+
+body.app-dark {
+  background:
+    radial-gradient(circle at 18% 20%, rgba(75, 132, 132, 0.24) 0%, rgba(75, 132, 132, 0) 40%),
+    radial-gradient(circle at 80% 12%, rgba(196, 133, 92, 0.2) 0%, rgba(196, 133, 92, 0) 36%),
+    linear-gradient(155deg, #191613 0%, #231f1b 50%, #2b241f 100%);
+  color: #f6e8d6;
+}
+
+#root {
+  width: 100%;
+}
