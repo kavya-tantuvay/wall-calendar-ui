@@ -61,7 +61,10 @@ export default function Calendar() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [hoveredDate, setHoveredDate] = useState(null);
-  const [notes, setNotes] = useState({});
+  const [notes, setNotes] = useState(() => {
+  const saved = localStorage.getItem("calendar-notes");
+  return saved ? JSON.parse(saved) : {};
+  });
   const [noteInput, setNoteInput] = useState('');
   const [activeNoteKey, setActiveNoteKey] = useState(buildMonthKey(today.getFullYear(), today.getMonth()));
   const [darkMode, setDarkMode] = useState(false);
@@ -98,6 +101,10 @@ export default function Calendar() {
   useEffect(() => {
     setNoteInput(notes[activeNoteKey] || '');
   }, [activeNoteKey, notes]);
+
+  useEffect(() => {
+  localStorage.setItem("calendar-notes", JSON.stringify(notes));
+  }, [notes]);
 
   useEffect(() => {
     document.body.classList.toggle('app-dark', darkMode);
