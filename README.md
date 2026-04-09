@@ -1,16 +1,105 @@
-# React + Vite
+# 📅 Interactive Wall Calendar UI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 🔗 Live Demo
 
-Currently, two official plugins are available:
+(Not deployed)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🎥 Demo Video
 
-## React Compiler
+https://www.loom.com/share/3110324bff1e41ba85b96433a2795539
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 📌 Overview
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+This project is an interactive wall calendar UI inspired by a physical hanging calendar. It combines clean design with useful features like date range selection, note-taking, and responsive layout.
+
+---
+
+## ✨ Features
+
+### 📅 Calendar
+
+* Month & year navigation
+* Dynamic calendar grid generation
+* Proper weekday alignment
+* Overflow dates from adjacent months
+
+### 🔵 Date Range Selection
+
+* Select start and end dates
+* Highlighted range selection
+* Hover preview before final selection
+
+### 📝 Notes Feature
+
+* Add notes for:
+
+  * Individual dates
+  * Date ranges
+  * Entire month
+* Notes are stored using **localStorage**
+* Data persists after page refresh
+
+### 🎨 UI / UX
+
+* Wall calendar inspired design
+* Monthly hero image
+* Smooth interactions and transitions
+* Dark / Light mode toggle
+
+### 📱 Responsive Design
+
+* Desktop → split layout (notes + calendar)
+* Mobile → stacked layout
+* Works across different screen sizes
+
+---
+
+## 🧠 Tech Stack
+
+* React (Hooks: useState, useEffect)
+* Vite
+* CSS (custom styling)
+* localStorage (data persistence)
+
+---
+
+## ⚙️ How to Run Locally
+
+```bash
+git clone https://github.com/kavya-tantuvay/wall-calendar-ui
+cd calendar
+npm install
+npm run dev
+```
+
+Open:
+
+```
+http://localhost:5173
+```
+
+---
+
+## 💡 My Approach
+
+While building this project, I focused on keeping the UI clean and intuitive instead of overcomplicating the design.
+
+Initially, I experimented with complex visual elements, but later simplified the layout to improve performance and maintainability.
+
+I implemented smooth interactions for date range selection and optimized note handling using localStorage to ensure data persistence.
+
+This project helped me strengthen my understanding of React state management, UI structuring, and responsive design.
+
+---
+
+## 🏁 Conclusion
+
+This project demonstrates:
+
+* Strong frontend fundamentals
+* Clean UI/UX design
+* Effective state management in React
+* Responsive development
+* Performance optimization
