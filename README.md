@@ -2,7 +2,7 @@
 
 ## 🔗 Live Demo
 
-(Not deployed)
+https://wall-calendar-ui-pi.vercel.app/
 
 ## 🎥 Demo Video
 
